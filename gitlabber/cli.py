@@ -26,6 +26,7 @@ def main():
                       excludes, args.file, args.concurrency, args.verbose)
     log.debug("Reading projects tree from gitlab at [%s]", args.url)
     tree.load_tree()
+    tree.convert_to_node()
 
     if tree.is_empty():
         log.fatal("The tree is empty, check your include/exclude patterns or run with more verbosity for debugging")
