@@ -111,25 +111,31 @@ class GitlabTree:
         self.repo.append(project)
 
 
-    def load_gitlab_tree(self):
+    def load_gitlab_tree(self, project_filter=None):
         projects = self.gitlab.projects.list(as_list=False)
         for project in projects:
-            log.info(project.web_url)
-            #node = self.make_node(group.name, self.root, url=group.web_url)
-            self.get_projects(project) #, node)
+            add = False
+            if project_filter is not None:
+                if project_filter == project.path_with_namespace.split('/')[0]:
+                    add = True
+            else:
+                add = True
+            if add:
+                log.info(project.web_url)
+                self.get_projects(project)
 
     def load_file_tree(self):
         with open(self.in_file, 'r') as stream:
             dct = yaml.safe_load(stream)
             self.root = DictImporter().import_(dct)
 
-    def load_tree(self):
+    def load_tree(self, project_filter=None):
         if self.in_file:
             log.debug("Loading tree from file [%s]", self.in_file)
             self.load_file_tree()
         else:
             log.info("Loading tree gitlab server [%s]", self.url)
-            self.load_gitlab_tree()
+            self.load_gitlab_tree(project_filter)
 
         log.debug("Fetched root node with [%d] projects" % len(
             self.root.leaves))

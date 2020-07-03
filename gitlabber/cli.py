@@ -25,7 +25,7 @@ def main():
     tree = GitlabTree(args.url, args.token, args.method, includes,
                       excludes, args.file, args.concurrency, args.verbose)
     log.debug("Reading projects tree from gitlab at [%s]", args.url)
-    tree.load_tree()
+    tree.load_tree(args.project)
     tree.convert_to_node()
 
     if tree.is_empty():
@@ -118,6 +118,9 @@ def parse_args(argv=None):
         '--print',
         action='store_true',
         help='print the tree without cloning')
+    parser.add_argument(
+        '--project',
+        help='filter root project to clone')
     parser.add_argument(
         '--print-format', 
         type=PrintFormat.argparse,
